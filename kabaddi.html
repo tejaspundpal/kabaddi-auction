@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kabaddi Team Auction</title>
+  <link rel="icon"
+    href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSPojcgrRcI_sGWs1_7DZ6g0x3gFwFHeHY9IRcrM8FpQ8ldHE6KN1Rb9eUSMNtMYzS_xvw&usqp=CAU"
+    type="image/x-icon">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    .team-container {
+      margin-top: 30px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1 id="title" class="text-center" style="color: rgb(4, 77, 112);">Kabaddi Team Auction</h1>
+    <div class="row team-container">
+      <div class="col">
+        <h3>Team Vitthal Powar</h3>
+        <p>Remaining Points: <span id="teamA-points">10000</span></p>
+        <form id="teamA-form">
+          <div class="form-group">
+            <label for="playerA">Player Name</label>
+            <input type="text" class="form-control" id="playerA" required>
+          </div>
+          <div class="form-group">
+            <label for="pointsA">Points</label>
+            <input type="number" class="form-control" id="pointsA" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Buy Player</button>
+        </form>
+        <ul id="teamA-players" class="mt-3"></ul>
+      </div>
+    </div>
+    <div class="row team-container">
+      <div class="col">
+        <h3>Team Yuvraj Powar</h3>
+        <p>Remaining Points: <span id="teamB-points">10000</span></p>
+        <form id="teamB-form">
+          <div class="form-group">
+            <label for="playerB">Player Name</label>
+            <input type="text" class="form-control" id="playerB" required>
+          </div>
+          <div class="form-group">
+            <label for="pointsB">Points</label>
+            <input type="number" class="form-control" id="pointsB" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Buy Player</button>
+        </form>
+        <ul id="teamB-players" class="mt-3"></ul>
+      </div>
+    </div>
+    <div class="row team-container">
+      <div class="col">
+        <h3>Team Suraj Shelake</h3>
+        <p>Remaining Points: <span id="teamC-points">10000</span></p>
+        <form id="teamC-form">
+          <div class="form-group">
+            <label for="playerC">Player Name</label>
+            <input type="text" class="form-control" id="playerC" required>
+          </div>
+          <div class="form-group">
+            <label for="pointsC">Points</label>
+            <input type="number" class="form-control" id="pointsC" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Buy Player</button>
+        </form>
+        <ul id="teamC-players" class="mt-3"></ul>
+      </div>
+    </div>
+    <div class="row team-container">
+      <div class="col">
+        <h3>Team Sunil Jadhav</h3>
+        <p>Remaining Points: <span id="teamD-points">10000</span></p>
+        <form id="teamD-form">
+          <div class="form-group">
+            <label for="playerD">Player Name</label>
+            <input type="text" class="form-control" id="playerD" required>
+          </div>
+          <div class="form-group">
+            <label for="pointsD">Points</label>
+            <input type="number" class="form-control" id="pointsD" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Buy Player</button>
+        </form>
+        <ul id="teamD-players" class="mt-3"></ul>
+      </div>
+    </div>
+    <div class="row team-container">
+      <div class="col">
+        <h3>Team Vaibhav Shivane</h3>
+        <p>Remaining Points: <span id="teamE-points">10000</span></p>
+        <form id="teamE-form">
+          <div class="form-group">
+            <label for="playerE">Player Name</label>
+            <input type="text" class="form-control" id="playerE" required>
+          </div>
+          <div class="form-group">
+            <label for="pointsE">Points</label>
+            <input type="number" class="form-control" id="pointsE" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Buy Player</button>
+        </form>
+        <ul id="teamE-players" class="mt-3"></ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function handleFormSubmit(event, team, remainingPoints) {
+      event.preventDefault();
+      const playerName = document.getElementById(`player${team}`).value;
+      const points = parseInt(document.getElementById(`points${team}`).value);
+      const remaining = remainingPoints - points;
+      if (remaining < 0) {
+        alert("Not enough points remaining!");
+        return;
+      }
+      document.getElementById(`team${team}-points`).textContent = remaining;
+      const playerList = document.getElementById(`team${team}-players`);
+      const li = document.createElement('li');
+      li.textContent = `${playerName} - ${points} points`;
+      const clearBtn = document.createElement('button');
+      clearBtn.textContent = "Clear Player";
+      clearBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2', 'mt-2');
+      clearBtn.onclick = function () {
+        removePlayer(team, playerName, points);
+        this.parentNode.removeChild(this);
+      };
+      li.appendChild(clearBtn);
+      playerList.appendChild(li);
+      saveDataToLocalStorage(team, playerName, points);
+      document.getElementById(`player${team}`).value = "";
+      document.getElementById(`points${team}`).value = "";
+    }
+
+    function removePlayer(team, playerName, points) {
+      const remainingPoints = parseInt(document.getElementById(`team${team}-points`).textContent);
+      document.getElementById(`team${team}-points`).textContent = remainingPoints + points;
+      const playerList = document.getElementById(`team${team}-players`);
+      const players = playerList.getElementsByTagName('li');
+      for (let i = 0; i < players.length; i++) {
+        if (players[i].textContent.includes(playerName)) {
+          playerList.removeChild(players[i]);
+          break;
+        }
+      }
+      removeDataFromLocalStorage(team, playerName, points);
+    }
+
+    function saveDataToLocalStorage(team, playerName, points) {
+      let data = localStorage.getItem('kabaddiData');
+      if (!data) {
+        data = {};
+      } else {
+        data = JSON.parse(data);
+      }
+      if (!data[team]) {
+        data[team] = [];
+      }
+      data[team].push({ playerName, points });
+      localStorage.setItem('kabaddiData', JSON.stringify(data));
+    }
+
+    function removeDataFromLocalStorage(team, playerName, points) {
+      let data = localStorage.getItem('kabaddiData');
+      if (!data) {
+        return;
+      }
+      data = JSON.parse(data);
+      if (!data[team]) {
+        return;
+      }
+      const players = data[team];
+      for (let i = 0; i < players.length; i++) {
+        if (players[i].playerName === playerName && players[i].points === points) {
+          data[team].splice(i, 1);
+          localStorage.setItem('kabaddiData', JSON.stringify(data));
+          break;
+        }
+      }
+    }
+
+    function loadDataFromLocalStorage() {
+      const data = localStorage.getItem('kabaddiData');
+      if (!data) {
+        return;
+      }
+      const parsedData = JSON.parse(data);
+      for (let team in parsedData) {
+        const players = parsedData[team];
+        const remainingPoints = 10000 - players.reduce((total, player) => total + player.points, 0);
+        document.getElementById(`team${team}-points`).textContent = remainingPoints;
+        const playerList = document.getElementById(`team${team}-players`);
+        players.forEach(player => {
+          const li = document.createElement('li');
+          li.textContent = `${player.playerName} - ${player.points} points`;
+          const clearBtn = document.createElement('button');
+          clearBtn.textContent = "Clear Player";
+          clearBtn.classList.add('btn', 'btn-danger', 'btn-sm', 'ml-2', 'mt-2');
+          clearBtn.onclick = function () {
+            removePlayer(team, player.playerName, player.points);
+            this.parentNode.removeChild(this);
+          };
+          li.appendChild(clearBtn);
+          playerList.appendChild(li);
+        });
+      }
+    }
+
+    window.onload = function () {
+      loadDataFromLocalStorage();
+    };
+
+    document.getElementById("teamA-form").addEventListener("submit", function (event) {
+      handleFormSubmit(event, "A", parseInt(document.getElementById("teamA-points").textContent));
+    });
+    document.getElementById("teamB-form").addEventListener("submit", function (event) {
+      handleFormSubmit(event, "B", parseInt(document.getElementById("teamB-points").textContent));
+    });
+    document.getElementById("teamC-form").addEventListener("submit", function (event) {
+      handleFormSubmit(event, "C", parseInt(document.getElementById("teamC-points").textContent));
+    });
+    document.getElementById("teamD-form").addEventListener("submit", function (event) {
+      handleFormSubmit(event, "D", parseInt(document.getElementById("teamD-points").textContent));
+    });
+    document.getElementById("teamE-form").addEventListener("submit", function (event) {
+      handleFormSubmit(event, "E", parseInt(document.getElementById("teamE-points").textContent));
+    });
+
+  </script>
+</body>
+
+</html>
